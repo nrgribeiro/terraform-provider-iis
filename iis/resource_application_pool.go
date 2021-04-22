@@ -8,6 +8,7 @@ import (
 )
 
 const NameKey = "name"
+const ManagedRuntimeKey = "runtime"
 const StatusKey = "status"
 
 func resourceApplicationPool() *schema.Resource {
@@ -22,6 +23,11 @@ func resourceApplicationPool() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			ManagedRuntimeKey: {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default: "",
+			},
 			StatusKey: {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -34,7 +40,8 @@ func resourceApplicationPool() *schema.Resource {
 func resourceApplicationPoolCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*iis.Client)
 	name := d.Get(NameKey).(string)
-	pool, err := client.CreateAppPool(ctx, name)
+	runtime := d.Get(ManagedRuntimeKey).(string)
+	pool, err := client.CreateAppPool(ctx, name, runtime)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -54,6 +61,9 @@ func resourceApplicationPoolRead(ctx context.Context, d *schema.ResourceData, m 
 	if err = d.Set(NameKey, appPool.Name); err != nil {
 		return diag.FromErr(err)
 	}
+	if err = d.Set(ManagedRuntimeKey, appPool.ManagedRuntimeKey); err != nil {
+		return diag.FromErr(err)
+	}
 	if err = d.Set(StatusKey, appPool.Status); err != nil {
 		return diag.FromErr(err)
 	}
@@ -62,8 +72,8 @@ func resourceApplicationPoolRead(ctx context.Context, d *schema.ResourceData, m 
 
 func resourceApplicationPoolUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*iis.Client)
-	if d.HasChange(NameKey) {
-		applicationPool, err := client.UpdateAppPool(ctx, d.Id(), d.Get(NameKey).(string))
+	if d.HasChange(NameKey) || d.HasChange(ManagedRuntimeKey) {
+		applicationPool, err := client.UpdateAppPool(ctx, d.Id(), d.Get(NameKey).(string),  d.Get(ManagedRuntimeKey).(string))
 		if err != nil {
 			return diag.FromErr(err)
 		}
