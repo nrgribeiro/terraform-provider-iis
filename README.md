@@ -1,6 +1,7 @@
 # Terraform IIS Provider
 
 Terraform Provider using the [Microsoft IIS Administration](https://docs.microsoft.com/en-us/IIS-Administration/) API.
+Enables the management of Application Pools, Directories and Websites in an IIS Server with IIS Administration API installed.
 
 # Usage
 
