@@ -2,9 +2,9 @@ package iis
 
 import (
 	"context"
+	"github.com/nrgribeiro/microsoft-iis-administration"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/nrgribeiro/microsoft-iis-administration"
 )
 
 const NameKey = "name"
@@ -61,7 +61,7 @@ func resourceApplicationPoolRead(ctx context.Context, d *schema.ResourceData, m 
 	if err = d.Set(NameKey, appPool.Name); err != nil {
 		return diag.FromErr(err)
 	}
-	if err = d.Set(ManagedRuntimeKey, appPool.ManagedRuntimeKey); err != nil {
+	if err = d.Set(ManagedRuntimeKey, appPool.ManagedRuntimeVersion); err != nil {
 		return diag.FromErr(err)
 	}
 	if err = d.Set(StatusKey, appPool.Status); err != nil {
